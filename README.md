@@ -1,13 +1,23 @@
 #  Core Data good practices
 
+## Table of Contents
+ * [Debugging](#debugging)
+ * [Theading](#theading)
+ * [Mogenerator](#mogenerator)
+ * [Migrations](#migrations)
+ * [Tools](#tools)
+ * [Good practices or TLDR](#good-practices-in-few-words-or-tldr)
+ * [References](#references)
 
-## While Debugging please use runtime arguments: *(EditScheme -> Run Tab -> Arguments)
+## Debugging
 
+While debugging please use runtime arguments: *(EditScheme -> Run Tab -> Arguments)
 
--com.apple.CoreData.ConcurrencyDebug 1   *(throws an exception whenever your app accesses a managed object context or managed object from the wrong dispatch queue)
--com.apple.CoreData.SQLDebug 1                 *(can be set from 1,2 or 3 for more verbose output, logs how CoreData manages SQL fetches, etc in background)
--com.apple.CoreData.MigrationDebug            *(will give you insights in the console about exceptional cases as it migrates data.)
-
+Argument | Description
+------------ | -------------
+-com.apple.CoreData.ConcurrencyDebug 1 | Throws an exception whenever your app access a managed object context or managed object from a wrong dispatch queue
+-com.apple.CoreData.SQLDebug 1 | 1,2 or 3 for a more verbose output, logs in console how CoreData manages SQL fetches, details about queries, etc.
+-com.apple.CoreData.MigrationDebug | Gives you insights in the console about exceptional cases as it migrates data
 
 ## Theading
 
@@ -37,8 +47,8 @@
  
  How to use it:
  1. Create anothe **Target** as "Aggregate" to your project
- 2. Setup an run script action on it's **Build Phases** as e.g >>> mogenerator -m YourProjectName/YourModelName.xcdatamodeld/YourModelVersions_v2.xcdatamodel -O PathWhere/ToBeExported --swift --template-var arc=true
- 3. Build this "Mogenerator" **Target** everytime you change your current Core Data model
+ 1. Setup an run script action on it's **Build Phases** as e.g >>> mogenerator -m YourProjectName/YourModelName.xcdatamodeld/YourModelVersions_v2.xcdatamodel -O PathWhere/ToBeExported --swift --template-var arc=true
+ 1. Build this "Mogenerator" **Target** everytime you change your current Core Data model
  
  [How to Install Mogenerator](http://rentzsch.github.io/mogenerator)
  You can check this tutorial [Mogenerator Usage](https://raptureinvenice.com/getting-started-with-mogenerator)
@@ -50,14 +60,14 @@
  
  Core Data does lightweight migration for free, like adding new properties (with default values), renaming old ones, etc *(You will have to add a new version of your model file, it doesn't work in place)
  Lightweight migration can perform:
- - Adding an attribute.
- - Removing an attribute.
- - Changing a non-optional attribute to be optional.
- - Changing an optional attribute to non-optional (by defining a default value).
- - Renaming an entity, attribute or relationship (by providing a Renaming ID).
- - Adding a relationship.
- - Removing a relationship.
- - Changing the entity hierarchy.
+ * Adding an attribute.
+ * Removing an attribute.
+ * Changing a non-optional attribute to be optional.
+ * Changing an optional attribute to non-optional (by defining a default value).
+ * Renaming an entity, attribute or relationship (by providing a Renaming ID).
+ * Adding a relationship.
+ * Removing a relationship.
+ * Changing the entity hierarchy.
  
  The default Core Data model migration approach is to go from earlier version to all possible future versions.
 
@@ -77,46 +87,46 @@
  
  Steps for a new xcdataModel version and migration:
  1. Create a new model, modify/add/remove/change names of some entitie
- 2. Create a new model version and add it to the CoreDataMigrationVersion as well to "nextVersion" function inside it
- 3a. If the migration is lightweight you don't have to do anything else, the current Sample setup will do that automatically
- 3b. If the migration is heavyweight you will have to create a new model Mapping file (**.xcmappingmodel**) and if needed a policy for each custom new Model or for the  nextVersion of an existing model
- 4. If you are doing unit tests, check our Sample UnitTest Target and add a test for the next migration + sqlite to be tested(note: keep them light in terms of memory, you want to run them fast and keep your Version Control cloud, light as well)
+ 1. Create a new model version and add it to the CoreDataMigrationVersion as well to "nextVersion" function inside it
+ 1. Migrate
+    1. If the migration is lightweight you don't have to do anything else, the current Sample setup will do that automatically
+    1. If the migration is heavyweight you will have to create a new model Mapping file (**.xcmappingmodel**) and if needed a policy for each custom new Model or for the  nextVersion of an existing model
+ 1. If you are doing unit tests, check our Sample UnitTest Target and add a test for the next migration + sqlite to be tested(note: keep them light in terms of memory, you want to run them fast and keep your Version Control cloud, light as well)
 
 
-## Tools to use with
+## Tools
 
-- **DB Browser for SQLite** to add/ remove things or check the data base and do queries
-Check it [**HERE**](https://sqlitebrowser.org)
+- [**DB Browser for SQLite**](https://sqlitebrowser.org) used to manipulate or check the data base and do queries
 
 ## Good practices in few words or TLDR
 
-- Make the model as small as you can, add only entities that are ment to be persisted other computed can later be crafted
+* Make the model as small as you can, add only entities that are ment to be persisted other computed can later be crafted
 
-- Try to avoid performing multiple writes in parallel, use a serial synchron queue in background instead
+* Try to avoid performing multiple writes in parallel, use a serial synchron queue in background instead
 
-- Use fetchBatchSize (to save memory, instead of fetching the entire data at once)
+* Use fetchBatchSize (to save memory, instead of fetching the entire data at once)
 
-- Use NSExpressions for not sorting things in memory, Core Data does it better
+* Use NSExpressions for not sorting things in memory, Core Data does it better.
 
-- While using Predicates put the number comparison first e.g if we want to get objects that have a specific name and a specific age, use the age first as the computer will do it faster using numbers
+* While using Predicates put the number comparison first _e.g if we want to get objects that have a specific name and a specific age, use the age first as the computer will do it faster using numbers_.
 
-- Predicate Costs, see "**Predicate Costs.png**" from "**Assets**" folder
+* Predicate Costs, see "**Predicate Costs.png**" from "**Assets**" folder
 
-- Allow external storage for a Binary Data e.g if you are using photos, the system might decide where is better to store them, in memory or on disk, depending on their size and your usage *(toggle that in the attribute inspector of that field)
+* Allow external storage for a Binary Data _e.g if you are using photos, the system might decide where is better to store them, in memory or on disk, depending on their size and your usage *(toggle that in the attribute inspector of that field)_
 
-- Large blobs as separate entity e.g a large photo and you just want to use as a tumbnail, you add the photo in a separate entity with relationship and keep only the tumbnail in the main entity.
+* Large blobs as separate entity _e.g a large photo and you just want to use as a tumbnail, you add the photo in a separate entity with relationship and keep only the tumbnail in the main entity_.
 
-- Work in batches to keep the memory low e.g you have to import a large data set.
+* Work in batches to keep the memory low _e.g you have to import a large data set_.
 
-- Use as much the variables (insertedObjects, updatedObject, removedObject) from the context
+* Use as much the variables (insertedObjects, updatedObject, removedObject) from the context
 
-- Architecture approach to CoreDataStack, you can choose between **InheritanceContext** and **SharePSC** (see images in **Assets**), those 2 have the best pros than other current stacks, use the one that fits for you and your data Set
+* Architecture approach to CoreDataStack, you can choose between **InheritanceContext** and **SharePSC** (see images in **Assets**), those 2 have the best pros than other current stacks, use the one that fits for you and your data Set
 
-- Use **NSCompoundPredicate** instead of creating a large predicate with AND, OR, (it's convenient and ca be used with computed predicates)
+* Use **NSCompoundPredicate** instead of creating a large predicate with AND, OR, (it's convenient and ca be used with computed predicates)
 
-- **NSManagedObjectContext** is not thread safe, must pe used on the queue it was created on
+* **NSManagedObjectContext** is not thread safe, must pe used on the queue it was created on
 
-- Set the **Inverse** when using relationship, as it's helps Core Data to maintain data integrity
+* Set the **Inverse** when using relationship, as it's helps Core Data to maintain data integrity
 
 
 
