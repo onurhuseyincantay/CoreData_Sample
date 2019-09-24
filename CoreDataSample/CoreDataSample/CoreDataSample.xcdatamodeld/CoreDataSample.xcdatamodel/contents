@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14903" systemVersion="19A536g" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Event" representedClassName="Event" syncable="YES">
+        <attribute name="data" optional="YES" attributeType="String" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" minValueString="2" spotlightIndexingEnabled="YES"/>
+        <relationship name="persons" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Person" inverseName="event" inverseEntity="Person"/>
+    </entity>
+    <entity name="Person" representedClassName="Person" syncable="YES">
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" minValueString="2" spotlightIndexingEnabled="YES"/>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="persons" inverseEntity="Event"/>
+    </entity>
+    <elements>
+        <element name="Event" positionX="-54" positionY="9" width="128" height="88"/>
+        <element name="Person" positionX="-63" positionY="-18" width="128" height="88"/>
+    </elements>
+</model>

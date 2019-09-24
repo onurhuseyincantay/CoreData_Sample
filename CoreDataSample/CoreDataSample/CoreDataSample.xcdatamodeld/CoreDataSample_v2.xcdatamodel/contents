@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14903" systemVersion="19A536g" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="DataAttachment" representedClassName="DataAttachment" syncable="YES">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="data" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES">
+            <userInfo>
+                <entry key="attributeValueScalarType" value="DataAttachmentType"/>
+            </userInfo>
+        </attribute>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="dataAttachment" inverseEntity="Event"/>
+    </entity>
+    <entity name="Event" representedClassName="Event" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" minValueString="2" spotlightIndexingEnabled="YES"/>
+        <relationship name="dataAttachment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DataAttachment" inverseName="event" inverseEntity="DataAttachment"/>
+        <relationship name="persons" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Person" inverseName="event" inverseEntity="Person"/>
+    </entity>
+    <entity name="Person" representedClassName="Person" syncable="YES">
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" minValueString="2" spotlightIndexingEnabled="YES"/>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="persons" inverseEntity="Event"/>
+    </entity>
+    <elements>
+        <element name="DataAttachment" positionX="-63" positionY="27" width="128" height="103"/>
+        <element name="Event" positionX="-54" positionY="9" width="128" height="88"/>
+        <element name="Person" positionX="-63" positionY="-18" width="128" height="88"/>
+    </elements>
+</model>
